@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.util.RepeatOffenderCalculator;
@@ -15,7 +16,7 @@ public class RepeatOffenderRecordServiceImpl
     private final RepeatOffenderRecordRepository recordRepo;
     private final RepeatOffenderCalculator calculator;
 
-    // ✅ Constructor order EXACT as required
+    // ✅ Constructor order EXACT (do not change)
     public RepeatOffenderRecordServiceImpl(
             StudentProfileRepository studentRepo,
             IntegrityCaseRepository caseRepo,
@@ -31,6 +32,7 @@ public class RepeatOffenderRecordServiceImpl
     @Override
     public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
 
+        // ✅ Student must exist
         StudentProfile student = studentRepo.findById(studentId)
                 .orElseThrow(() ->
                         new RuntimeException("User not found")
@@ -39,14 +41,22 @@ public class RepeatOffenderRecordServiceImpl
         List<IntegrityCase> cases =
                 caseRepo.findByStudentProfile(student);
 
-        // Rule: generate only if >= 2 cases
+        // ✅ Rule: generate only if >= 2 cases
         if (cases.size() < 2) {
+            student.setIsRepeatOffender(false);
+            studentRepo.save(student);
             return null;
         }
 
+        // ✅ Use calculator (project requirement)
         RepeatOffenderRecord record =
                 calculator.computeRepeatOffenderRecord(student, cases);
 
+        // ✅ If record already exists → update it
+        recordRepo.findByStudentProfile(student)
+                .ifPresent(existing -> record.setId(existing.getId()));
+
+        // ✅ Mark student as repeat offender
         student.setIsRepeatOffender(true);
         studentRepo.save(student);
 
