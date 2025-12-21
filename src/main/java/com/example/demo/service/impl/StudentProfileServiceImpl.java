@@ -1,33 +1,53 @@
-package com.example.demo.controller;
+package com.example.demo.service.impl;
 
-import com.example.demo.entity.StudentProfile;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.StudentProfile;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/students")
-public class StudentProfileControllerImpl {
+@Service
+public class StudentProfileServiceImpl implements StudentProfileService {
 
-    private final StudentProfileService service;
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
 
-    public StudentProfileController(StudentProfileService service) {
-        this.service = service;
+    @Override
+    public StudentProfile saveStudent(StudentProfile student) {
+        return studentProfileRepository.save(student);
     }
 
-    @PostMapping
-    public StudentProfile create(@RequestBody StudentProfile s) {
-        return service.createStudent(s);
+    @Override
+    public List<StudentProfile> getAllStudents() {
+        return studentProfileRepository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public StudentProfile get(@PathVariable Long id) {
-        return service.getStudentById(id);
+    @Override
+    public Optional<StudentProfile> getStudentById(Long id) {
+        return studentProfileRepository.findById(id);
     }
 
-    @GetMapping
-    public List<StudentProfile> getAll() {
-        return service.getAllStudents();
+    @Override
+    public StudentProfile updateStudent(Long id, StudentProfile studentDetails) {
+        StudentProfile existingStudent = studentProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+
+        existingStudent.setName(studentDetails.getName());
+        existingStudent.setEmail(studentDetails.getEmail());
+        existingStudent.setAge(studentDetails.getAge());
+        // Add other fields as needed
+
+        return studentProfileRepository.save(existingStudent);
+    }
+
+    @Override
+    public void deleteStudent(Long id) {
+        StudentProfile existingStudent = studentProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+        studentProfileRepository.delete(existingStudent);
     }
 }
