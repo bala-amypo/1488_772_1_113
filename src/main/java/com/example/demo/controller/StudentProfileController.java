@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "student_profiles")
-public class StudentProfile {
+public class StudentProfileController {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +28,9 @@ public class StudentProfile {
     private Integer age;
 
     // Constructors
-    public StudentProfile() {}
+    public StudentProfileController() {}
 
-    public StudentProfile(String name, String email, Integer age) {
+    public StudentProfileController(String name, String email, Integer age) {
         this.name = name;
         this.email = email;
         this.age = age;
