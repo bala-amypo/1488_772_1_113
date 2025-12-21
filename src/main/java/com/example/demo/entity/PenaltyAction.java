@@ -20,3 +20,6 @@ public class PenaltyAction {
 
     private LocalDateTime issuedAt = LocalDateTime.now();
 }
+public IntegrityCase getIntegrityCase() {
+    return integrityCase;
+}

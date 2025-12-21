@@ -18,3 +18,14 @@ public class RepeatOffenderRecord {
     private LocalDate firstIncidentDate;
     private String flagSeverity;
 }
+public void setStudentProfile(StudentProfile studentProfile) {
+    this.studentProfile = studentProfile;
+}
+
+public void setTotalCases(int totalCases) {
+    this.totalCases = totalCases;
+}
+
+public void setFlagSeverity(String flagSeverity) {
+    this.flagSeverity = flagSeverity;
+}
