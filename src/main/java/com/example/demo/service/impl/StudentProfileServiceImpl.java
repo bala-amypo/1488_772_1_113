@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/students")
-public class StudentProfileController {
+public class StudentProfileControllerImpl {
 
     private final StudentProfileService service;
 
