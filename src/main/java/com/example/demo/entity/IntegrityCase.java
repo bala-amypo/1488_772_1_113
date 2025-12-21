@@ -30,3 +30,15 @@ public class IntegrityCase {
     @OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL)
     private List<PenaltyAction> penaltyActions = new ArrayList<>();
 }
+public StudentProfile getStudentProfile() {
+    return studentProfile;
+}
+
+public void setStatus(String status) {
+    this.status = status;
+}
+
+public LocalDate getIncidentDate() {
+    return incidentDate;
+}
+

@@ -27,3 +27,11 @@ public class StudentProfile {
     @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
     private List<IntegrityCase> integrityCases = new ArrayList<>();
 }
+public Integer getYearLevel() {
+    return yearLevel;
+}
+
+public void setRepeatOffender(boolean repeatOffender) {
+    this.repeatOffender = repeatOffender;
+}
+
