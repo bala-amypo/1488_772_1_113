@@ -8,4 +8,3 @@ public interface IntegrityCaseService {
     IntegrityCase updateCaseStatus(Long id, String status);
     List<IntegrityCase> getCasesByStudent(Long studentId);
 }
-
