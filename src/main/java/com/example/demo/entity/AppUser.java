@@ -1,35 +1,13 @@
-package com.example.demo.entity;
+package com.example.demo.dto;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.*;
+public class ApiResponse {
+    private boolean success;
+    private String message;
+    private Object data;
 
-@Entity
-@Table(name = "app_users")
-public class AppUser {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String fullName;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    private String password;
-
-    private Boolean enabled = true;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
-
-    public AppUser() {}
+    public ApiResponse(boolean success, String message, Object data) {
+        this.success = success;
+        this.message = message;
+        this.data = data;
+    }
 }
