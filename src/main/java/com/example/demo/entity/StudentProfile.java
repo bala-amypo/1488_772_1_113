@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 
 @Entity
 @Table(name = "student_profiles")
@@ -16,22 +16,19 @@ public class StudentProfile {
     private String name;
     private String email;
     private String program;
-
-    @Column(nullable = false)
     private Integer yearLevel;
 
-    private Boolean repeatOffender = false;
-
+    private boolean repeatOffender = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
-    private List<IntegrityCase> integrityCases = new ArrayList<>();
-}
-public Integer getYearLevel() {
-    return yearLevel;
-}
+    @OneToMany(mappedBy = "studentProfile")
+    private List<IntegrityCase> integrityCases;
 
-public void setRepeatOffender(boolean repeatOffender) {
-    this.repeatOffender = repeatOffender;
-}
+    public Integer getYearLevel() {
+        return yearLevel;
+    }
 
+    public void setRepeatOffender(boolean repeatOffender) {
+        this.repeatOffender = repeatOffender;
+    }
+}
