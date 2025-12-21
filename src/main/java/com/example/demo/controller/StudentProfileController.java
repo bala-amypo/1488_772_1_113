@@ -1,33 +1,48 @@
-package com.example.demo.controller;
+package com.example.demo.entity;
 
-import com.example.demo.entity.StudentProfile;
-import com.example.demo.service.StudentProfileService;
-import org.springframework.web.bind.annotation.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
+@Entity
+@Table(name = "student_profiles")
+public class StudentProfile {
 
-@RestController
-@RequestMapping("/students")
-public class StudentProfileController {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final StudentProfileService service;
+    @NotBlank(message = "Name is mandatory")
+    private String name;
 
-    public StudentProfileController(StudentProfileService service) {
-        this.service = service;
+    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email is mandatory")
+    private String email;
+
+    @NotNull(message = "Age is mandatory")
+    private Integer age;
+
+    // Constructors
+    public StudentProfile() {}
+
+    public StudentProfile(String name, String email, Integer age) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
     }
 
-    @PostMapping
-    public StudentProfile create(@RequestBody StudentProfile s) {
-        return service.createStudent(s);
-    }
-
-    @GetMapping("/{id}")
-    public StudentProfile get(@PathVariable Long id) {
-        return service.getStudentById(id);
-    }
-
-    @GetMapping
-    public List<StudentProfile> getAll() {
-        return service.getAllStudents();
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public Integer getAge() { return age; }
+    public void setAge(Integer age) { this.age = age; }
 }
