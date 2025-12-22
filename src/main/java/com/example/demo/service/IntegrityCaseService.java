@@ -10,4 +10,6 @@ public interface IntegrityCaseService {
     List<IntegrityCase> getCasesByStudent(Long studentId);
     Optional<IntegrityCase> getCaseById(Long caseId);
     List<IntegrityCase> getAllCases();
+    IntegrityCase updateCase(Long id, IntegrityCase integrityCase);
+    void deleteCase(Long id);
 }
