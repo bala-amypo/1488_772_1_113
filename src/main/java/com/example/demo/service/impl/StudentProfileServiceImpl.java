@@ -1,8 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
-import com.example.demo.util.RepeatOffenderCalculator;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.StudentProfileRepository;
+import com.example.demo.service.StudentProfileService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,43 +12,24 @@ import java.util.List;
 public class StudentProfileServiceImpl implements StudentProfileService {
 
     private final StudentProfileRepository studentRepo;
-    private final IntegrityCaseRepository caseRepo;
-    private final RepeatOffenderRecordRepository repeatRepo;
-    private final RepeatOffenderCalculator calculator;
 
-    public StudentProfileServiceImpl(
-            StudentProfileRepository studentRepo,
-            IntegrityCaseRepository caseRepo,
-            RepeatOffenderRecordRepository repeatRepo,
-            RepeatOffenderCalculator calculator) {
+    public StudentProfileServiceImpl(StudentProfileRepository studentRepo) {
         this.studentRepo = studentRepo;
-        this.caseRepo = caseRepo;
-        this.repeatRepo = repeatRepo;
-        this.calculator = calculator;
     }
 
+    @Override
     public StudentProfile createStudent(StudentProfile student) {
         return studentRepo.save(student);
     }
 
-    public StudentProfile getStudentById(Long id) {
-        return studentRepo.findById(id).orElse(null);
-    }
-
+    @Override
     public List<StudentProfile> getAllStudents() {
         return studentRepo.findAll();
     }
 
-    public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-        StudentProfile student = studentRepo.findById(studentId).orElse(null);
-        if (student == null) return null;
-
-        List<IntegrityCase> cases = caseRepo.findByStudentProfile(student);
-        student.setIsRepeatOffender(cases.size() >= 2);
-        return studentRepo.save(student);
-    }
-
-    public StudentProfile findByStudentIdentifier(String studentId) {
-        return studentRepo.findByStudentIdentifier(studentId);
+    @Override
+    public StudentProfile getStudentById(Long id) {
+        return studentRepo.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Student not found with id: " + id));
     }
 }

@@ -1,7 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.service.IntegrityCaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,36 +12,24 @@ import java.util.List;
 public class IntegrityCaseServiceImpl implements IntegrityCaseService {
 
     private final IntegrityCaseRepository caseRepo;
-    private final StudentProfileRepository studentRepo;
 
-    public IntegrityCaseServiceImpl(
-            IntegrityCaseRepository caseRepo,
-            StudentProfileRepository studentRepo) {
+    public IntegrityCaseServiceImpl(IntegrityCaseRepository caseRepo) {
         this.caseRepo = caseRepo;
-        this.studentRepo = studentRepo;
     }
 
+    @Override
     public IntegrityCase createCase(IntegrityCase integrityCase) {
         return caseRepo.save(integrityCase);
     }
 
-    public IntegrityCase updateCaseStatus(Long caseId, String status) {
-        IntegrityCase ic = caseRepo.findById(caseId).orElse(null);
-        if (ic == null) return null;
-        ic.setStatus(status);
-        return caseRepo.save(ic);
-    }
-
-    public List<IntegrityCase> getCasesByStudent(Long studentId) {
-        StudentProfile s = studentRepo.findById(studentId).orElse(null);
-        return caseRepo.findByStudentProfile(s);
-    }
-
-    public IntegrityCase getCaseById(Long id) {
-        return caseRepo.findById(id).orElse(null);
-    }
-
+    @Override
     public List<IntegrityCase> getAllCases() {
         return caseRepo.findAll();
+    }
+
+    @Override
+    public IntegrityCase getCaseById(Long id) {
+        return caseRepo.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Case not found with id: " + id));
     }
 }
