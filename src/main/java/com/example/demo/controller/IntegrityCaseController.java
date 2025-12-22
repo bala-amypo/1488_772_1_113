@@ -2,32 +2,111 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.IntegrityCase;
 import com.example.demo.service.IntegrityCaseService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/cases")
+@RequestMapping("/api/cases")
 public class IntegrityCaseController {
-
-    private final IntegrityCaseService caseService;
-
-    public IntegrityCaseController(IntegrityCaseService caseService) {
-        this.caseService = caseService;
+    
+    private final IntegrityCaseService integrityCaseService;
+    
+    public IntegrityCaseController(IntegrityCaseService integrityCaseService) {
+        this.integrityCaseService = integrityCaseService;
     }
-
+    
     @PostMapping
-    public IntegrityCase createCase(@RequestBody IntegrityCase integrityCase) {
-        return caseService.createCase(integrityCase);
+    public ResponseEntity<?> createCase(@RequestBody IntegrityCase integrityCase) {
+        try {
+            IntegrityCase created = integrityCaseService.createCase(integrityCase);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Case created successfully");
+            response.put("data", created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
-
-    @GetMapping
-    public List<IntegrityCase> getAllCases() {
-        return caseService.getAllCases();
+    
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateCaseStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            String newStatus = request.get("status");
+            if (newStatus == null || newStatus.trim().isEmpty()) {
+                throw new IllegalArgumentException("Status is required");
+            }
+            
+            IntegrityCase updated = integrityCaseService.updateCaseStatus(id, newStatus);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Case status updated");
+            response.put("data", updated);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
-
+    
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<?> getCasesByStudent(@PathVariable Long studentId) {
+        try {
+            List<IntegrityCase> cases = integrityCaseService.getCasesByStudent(studentId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", cases);
+            response.put("count", cases.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+    
     @GetMapping("/{id}")
-    public IntegrityCase getCaseById(@PathVariable Long id) {
-        return caseService.getCaseById(id);
+    public ResponseEntity<?> getCaseById(@PathVariable Long id) {
+        try {
+            return integrityCaseService.getCaseById(id)
+                    .map(caseObj -> {
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", true);
+                        response.put("data", caseObj);
+                        return ResponseEntity.ok(response);
+                    })
+                    .orElseGet(() -> {
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("message", "Case not found with id: " + id);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    });
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+    
+    @GetMapping
+    public ResponseEntity<?> getAllCases() {
+        List<IntegrityCase> cases = integrityCaseService.getAllCases();
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", cases);
+        response.put("count", cases.size());
+        return ResponseEntity.ok(response);
     }
 }
