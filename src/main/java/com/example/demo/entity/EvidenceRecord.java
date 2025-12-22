@@ -27,7 +27,6 @@ public class EvidenceRecord {
     @Column(name = "submitted_at", nullable = false)
     private LocalDateTime submittedAt;
     
-    // Constructors
     public EvidenceRecord() {
         this.submittedAt = LocalDateTime.now();
     }
@@ -43,29 +42,14 @@ public class EvidenceRecord {
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    
     public IntegrityCase getIntegrityCase() { return integrityCase; }
-    public void setIntegrityCase(IntegrityCase integrityCase) { 
-        if (integrityCase == null) {
-            throw new IllegalArgumentException("Integrity case cannot be null");
-        }
-        this.integrityCase = integrityCase; 
-    }
-    
+    public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
     public String getEvidenceType() { return evidenceType; }
     public void setEvidenceType(String evidenceType) { this.evidenceType = evidenceType; }
-    
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
-    
     public String getSubmittedBy() { return submittedBy; }
     public void setSubmittedBy(String submittedBy) { this.submittedBy = submittedBy; }
-    
     public LocalDateTime getSubmittedAt() { return submittedAt; }
-    public void setSubmittedAt(LocalDateTime submittedAt) { 
-        if (submittedAt == null) {
-            throw new IllegalArgumentException("Submitted at timestamp cannot be null");
-        }
-        this.submittedAt = submittedAt; 
-    }
+    public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
 }

@@ -27,7 +27,6 @@ public class PenaltyAction {
     @Column(name = "issued_at", nullable = false)
     private LocalDateTime issuedAt;
     
-    // Constructors
     public PenaltyAction() {
         this.issuedAt = LocalDateTime.now();
     }
@@ -43,29 +42,14 @@ public class PenaltyAction {
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    
     public IntegrityCase getIntegrityCase() { return integrityCase; }
-    public void setIntegrityCase(IntegrityCase integrityCase) { 
-        if (integrityCase == null) {
-            throw new IllegalArgumentException("Integrity case cannot be null");
-        }
-        this.integrityCase = integrityCase; 
-    }
-    
+    public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
     public String getPenaltyType() { return penaltyType; }
     public void setPenaltyType(String penaltyType) { this.penaltyType = penaltyType; }
-    
     public String getDetails() { return details; }
     public void setDetails(String details) { this.details = details; }
-    
     public String getIssuedBy() { return issuedBy; }
     public void setIssuedBy(String issuedBy) { this.issuedBy = issuedBy; }
-    
     public LocalDateTime getIssuedAt() { return issuedAt; }
-    public void setIssuedAt(LocalDateTime issuedAt) { 
-        if (issuedAt == null) {
-            throw new IllegalArgumentException("Issued at timestamp cannot be null");
-        }
-        this.issuedAt = issuedAt; 
-    }
+    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
 }
