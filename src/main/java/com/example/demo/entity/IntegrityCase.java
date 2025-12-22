@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class IntegrityCase {
     
     @ManyToOne
     @JoinColumn(name = "student_profile_id", nullable = false)
+    @NotNull(message = "Student profile cannot be null")
     private StudentProfile studentProfile;
     
     @Column(name = "course_code")
@@ -65,9 +67,6 @@ public class IntegrityCase {
     
     public StudentProfile getStudentProfile() { return studentProfile; }
     public void setStudentProfile(StudentProfile studentProfile) { 
-        if (studentProfile == null) {
-            throw new IllegalArgumentException("Student profile cannot be null");
-        }
         this.studentProfile = studentProfile; 
     }
     
@@ -82,9 +81,6 @@ public class IntegrityCase {
     
     public String getStatus() { return status; }
     public void setStatus(String status) { 
-        if (status == null || status.trim().isEmpty()) {
-            throw new IllegalArgumentException("Status cannot be null or empty");
-        }
         this.status = status; 
     }
     

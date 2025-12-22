@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class AppUser {
     )
     private Set<Role> roles = new HashSet<>();
     
-    // Constructors
+    // Constructors, Getters, Setters (same as before)
     public AppUser() {
         this.createdAt = LocalDateTime.now();
     }
