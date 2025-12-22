@@ -32,8 +32,8 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
     
     @Override
     public RepeatOffenderRecord calculateAndSaveRepeatOffenderRecord(Long studentId) {
-        StudentProfile studentProfile = studentProfileRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student profile not found with id: " + studentId));
+        StudentProfile student = studentProfileRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
         
         // Get all cases for this student
         var cases = integrityCaseRepository.findByStudentProfile_Id(studentId);
@@ -45,7 +45,7 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
                 .filter(date -> date != null)
                 .min(Comparator.naturalOrder());
         
-        // Calculate severity based on case count
+        // Calculate severity
         String flagSeverity;
         if (totalCases == 0) {
             flagSeverity = "LOW";
@@ -58,12 +58,12 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
         }
         
         // Update student's repeat offender status
-        studentProfile.setRepeatOffender(totalCases >= 2);
-        studentProfileRepository.save(studentProfile);
+        student.setRepeatOffender(totalCases >= 2);
+        studentProfileRepository.save(student);
         
-        // Find existing record or create new one
+        // Find existing record or create new
         Optional<RepeatOffenderRecord> existingRecord = 
-                repeatOffenderRecordRepository.findByStudentProfile(studentProfile);
+                repeatOffenderRecordRepository.findByStudentProfile(student);
         
         RepeatOffenderRecord record;
         if (existingRecord.isPresent()) {
@@ -73,7 +73,7 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
             firstIncidentDate.ifPresent(record::setFirstIncidentDate);
         } else {
             record = new RepeatOffenderRecord(
-                studentProfile,
+                student,
                 totalCases,
                 firstIncidentDate.orElse(null),
                 flagSeverity

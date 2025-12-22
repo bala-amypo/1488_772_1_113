@@ -21,7 +21,7 @@ public class IntegrityCaseController {
     }
     
     @PostMapping
-    public ResponseEntity<?> createCase(@RequestBody IntegrityCase integrityCase) {
+    public ResponseEntity<Map<String, Object>> createCase(@RequestBody IntegrityCase integrityCase) {
         try {
             IntegrityCase created = integrityCaseService.createCase(integrityCase);
             Map<String, Object> response = new HashMap<>();
@@ -38,7 +38,8 @@ public class IntegrityCaseController {
     }
     
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateCaseStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> updateCaseStatus(@PathVariable Long id, 
+                                                                @RequestBody Map<String, String> request) {
         try {
             String newStatus = request.get("status");
             if (newStatus == null || newStatus.trim().isEmpty()) {
@@ -60,7 +61,7 @@ public class IntegrityCaseController {
     }
     
     @GetMapping("/student/{studentId}")
-    public ResponseEntity<?> getCasesByStudent(@PathVariable Long studentId) {
+    public ResponseEntity<Map<String, Object>> getCasesByStudent(@PathVariable Long studentId) {
         try {
             List<IntegrityCase> cases = integrityCaseService.getCasesByStudent(studentId);
             Map<String, Object> response = new HashMap<>();
@@ -77,31 +78,24 @@ public class IntegrityCaseController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCaseById(@PathVariable Long id) {
-        try {
-            return integrityCaseService.getCaseById(id)
-                    .map(caseObj -> {
-                        Map<String, Object> response = new HashMap<>();
-                        response.put("success", true);
-                        response.put("data", caseObj);
-                        return ResponseEntity.ok(response);
-                    })
-                    .orElseGet(() -> {
-                        Map<String, Object> response = new HashMap<>();
-                        response.put("success", false);
-                        response.put("message", "Case not found with id: " + id);
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-                    });
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+    public ResponseEntity<Map<String, Object>> getCaseById(@PathVariable Long id) {
+        return integrityCaseService.getCaseById(id)
+                .map(caseObj -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("data", caseObj);
+                    return ResponseEntity.ok(response);
+                })
+                .orElseGet(() -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Case not found with id: " + id);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                });
     }
     
     @GetMapping
-    public ResponseEntity<?> getAllCases() {
+    public ResponseEntity<Map<String, Object>> getAllCases() {
         List<IntegrityCase> cases = integrityCaseService.getAllCases();
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);

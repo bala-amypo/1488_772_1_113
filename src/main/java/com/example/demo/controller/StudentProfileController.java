@@ -21,7 +21,7 @@ public class StudentProfileController {
     }
     
     @PostMapping
-    public ResponseEntity<?> createStudent(@RequestBody StudentProfile studentProfile) {
+    public ResponseEntity<Map<String, Object>> createStudent(@RequestBody StudentProfile studentProfile) {
         try {
             StudentProfile created = studentProfileService.createStudent(studentProfile);
             Map<String, Object> response = new HashMap<>();
@@ -38,7 +38,7 @@ public class StudentProfileController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getStudentById(@PathVariable Long id) {
         try {
             StudentProfile student = studentProfileService.getStudentById(id);
             Map<String, Object> response = new HashMap<>();
@@ -54,7 +54,7 @@ public class StudentProfileController {
     }
     
     @GetMapping
-    public ResponseEntity<?> getAllStudents() {
+    public ResponseEntity<Map<String, Object>> getAllStudents() {
         List<StudentProfile> students = studentProfileService.getAllStudents();
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
@@ -64,7 +64,7 @@ public class StudentProfileController {
     }
     
     @PutMapping("/{id}/repeat-status")
-    public ResponseEntity<?> updateRepeatStatus(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> updateRepeatStatus(@PathVariable Long id) {
         try {
             StudentProfile updated = studentProfileService.updateRepeatOffenderStatus(id);
             Map<String, Object> response = new HashMap<>();
