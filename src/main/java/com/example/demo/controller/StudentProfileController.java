@@ -16,7 +16,7 @@ public class StudentProfileController {
     }
 
     @PostMapping
-    public StudentProfile createStudent(@RequestBody StudentProfile s) {
+    public StudentProfileController createStudent(@RequestBody StudentProfile s) {
         return service.saveStudent(s);
     }
 
