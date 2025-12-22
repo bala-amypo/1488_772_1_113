@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class IntegrityCase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "student_profile_id", nullable = false)
     private StudentProfile studentProfile;
     
@@ -27,21 +27,35 @@ public class IntegrityCase {
     @Column(columnDefinition = "TEXT")
     private String description;
     
+    @Column(nullable = false)
     private String status = "OPEN";
     
     @Column(name = "incident_date")
     private LocalDate incidentDate;
     
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
-    @OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL)
     private List<EvidenceRecord> evidenceRecords = new ArrayList<>();
     
-    @OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL)
     private List<PenaltyAction> penaltyActions = new ArrayList<>();
     
+    // Constructors
     public IntegrityCase() {
+        this.createdAt = LocalDateTime.now();
+        this.status = "OPEN";
+    }
+    
+    public IntegrityCase(StudentProfile studentProfile, String courseCode, String instructorName, 
+                        String description, LocalDate incidentDate) {
+        this.studentProfile = studentProfile;
+        this.courseCode = courseCode;
+        this.instructorName = instructorName;
+        this.description = description;
+        this.incidentDate = incidentDate;
+        this.status = "OPEN";
         this.createdAt = LocalDateTime.now();
     }
     
@@ -50,7 +64,12 @@ public class IntegrityCase {
     public void setId(Long id) { this.id = id; }
     
     public StudentProfile getStudentProfile() { return studentProfile; }
-    public void setStudentProfile(StudentProfile studentProfile) { this.studentProfile = studentProfile; }
+    public void setStudentProfile(StudentProfile studentProfile) { 
+        if (studentProfile == null) {
+            throw new IllegalArgumentException("Student profile cannot be null");
+        }
+        this.studentProfile = studentProfile; 
+    }
     
     public String getCourseCode() { return courseCode; }
     public void setCourseCode(String courseCode) { this.courseCode = courseCode; }
@@ -62,7 +81,12 @@ public class IntegrityCase {
     public void setDescription(String description) { this.description = description; }
     
     public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public void setStatus(String status) { 
+        if (status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
+        }
+        this.status = status; 
+    }
     
     public LocalDate getIncidentDate() { return incidentDate; }
     public void setIncidentDate(LocalDate incidentDate) { this.incidentDate = incidentDate; }
@@ -75,4 +99,19 @@ public class IntegrityCase {
     
     public List<PenaltyAction> getPenaltyActions() { return penaltyActions; }
     public void setPenaltyActions(List<PenaltyAction> penaltyActions) { this.penaltyActions = penaltyActions; }
+    
+    public void addEvidenceRecord(EvidenceRecord evidenceRecord) {
+        evidenceRecords.add(evidenceRecord);
+        evidenceRecord.setIntegrityCase(this);
+    }
+    
+    public void addPenaltyAction(PenaltyAction penaltyAction) {
+        penaltyActions.add(penaltyAction);
+        penaltyAction.setIntegrityCase(this);
+        
+        // When penalty is added, change status from "OPEN" to "UNDER_REVIEW"
+        if ("OPEN".equals(this.status)) {
+            this.status = "UNDER_REVIEW";
+        }
+    }
 }

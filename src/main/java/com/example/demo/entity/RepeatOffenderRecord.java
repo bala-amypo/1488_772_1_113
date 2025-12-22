@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -11,7 +11,7 @@ public class RepeatOffenderRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "student_profile_id", nullable = false)
     private StudentProfile studentProfile;
     
@@ -24,11 +24,14 @@ public class RepeatOffenderRecord {
     @Column(name = "flag_severity")
     private String flagSeverity = "LOW";
     
+    // Constructors
     public RepeatOffenderRecord() {}
     
-    public RepeatOffenderRecord(StudentProfile studentProfile, Integer totalCases, String flagSeverity) {
+    public RepeatOffenderRecord(StudentProfile studentProfile, Integer totalCases, 
+                               LocalDate firstIncidentDate, String flagSeverity) {
         this.studentProfile = studentProfile;
         this.totalCases = totalCases;
+        this.firstIncidentDate = firstIncidentDate;
         this.flagSeverity = flagSeverity;
     }
     
@@ -37,14 +40,29 @@ public class RepeatOffenderRecord {
     public void setId(Long id) { this.id = id; }
     
     public StudentProfile getStudentProfile() { return studentProfile; }
-    public void setStudentProfile(StudentProfile studentProfile) { this.studentProfile = studentProfile; }
+    public void setStudentProfile(StudentProfile studentProfile) { 
+        if (studentProfile == null) {
+            throw new IllegalArgumentException("Student profile cannot be null");
+        }
+        this.studentProfile = studentProfile; 
+    }
     
     public Integer getTotalCases() { return totalCases; }
-    public void setTotalCases(Integer totalCases) { this.totalCases = totalCases; }
+    public void setTotalCases(Integer totalCases) { 
+        if (totalCases < 0) {
+            throw new IllegalArgumentException("Total cases cannot be negative");
+        }
+        this.totalCases = totalCases; 
+    }
     
     public LocalDate getFirstIncidentDate() { return firstIncidentDate; }
     public void setFirstIncidentDate(LocalDate firstIncidentDate) { this.firstIncidentDate = firstIncidentDate; }
     
     public String getFlagSeverity() { return flagSeverity; }
-    public void setFlagSeverity(String flagSeverity) { this.flagSeverity = flagSeverity; }
+    public void setFlagSeverity(String flagSeverity) { 
+        if (!"LOW".equals(flagSeverity) && !"MEDIUM".equals(flagSeverity) && !"HIGH".equals(flagSeverity)) {
+            throw new IllegalArgumentException("Flag severity must be LOW, MEDIUM, or HIGH");
+        }
+        this.flagSeverity = flagSeverity; 
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,7 +11,7 @@ public class EvidenceRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "integrity_case_id", nullable = false)
     private IntegrityCase integrityCase;
     
@@ -27,7 +27,16 @@ public class EvidenceRecord {
     @Column(name = "submitted_at", nullable = false)
     private LocalDateTime submittedAt;
     
+    // Constructors
     public EvidenceRecord() {
+        this.submittedAt = LocalDateTime.now();
+    }
+    
+    public EvidenceRecord(IntegrityCase integrityCase, String evidenceType, String content, String submittedBy) {
+        this.integrityCase = integrityCase;
+        this.evidenceType = evidenceType;
+        this.content = content;
+        this.submittedBy = submittedBy;
         this.submittedAt = LocalDateTime.now();
     }
     
@@ -36,7 +45,12 @@ public class EvidenceRecord {
     public void setId(Long id) { this.id = id; }
     
     public IntegrityCase getIntegrityCase() { return integrityCase; }
-    public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
+    public void setIntegrityCase(IntegrityCase integrityCase) { 
+        if (integrityCase == null) {
+            throw new IllegalArgumentException("Integrity case cannot be null");
+        }
+        this.integrityCase = integrityCase; 
+    }
     
     public String getEvidenceType() { return evidenceType; }
     public void setEvidenceType(String evidenceType) { this.evidenceType = evidenceType; }
@@ -48,5 +62,10 @@ public class EvidenceRecord {
     public void setSubmittedBy(String submittedBy) { this.submittedBy = submittedBy; }
     
     public LocalDateTime getSubmittedAt() { return submittedAt; }
-    public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+    public void setSubmittedAt(LocalDateTime submittedAt) { 
+        if (submittedAt == null) {
+            throw new IllegalArgumentException("Submitted at timestamp cannot be null");
+        }
+        this.submittedAt = submittedAt; 
+    }
 }

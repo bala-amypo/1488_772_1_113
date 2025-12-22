@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,7 +11,7 @@ public class PenaltyAction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "integrity_case_id", nullable = false)
     private IntegrityCase integrityCase;
     
@@ -27,7 +27,16 @@ public class PenaltyAction {
     @Column(name = "issued_at", nullable = false)
     private LocalDateTime issuedAt;
     
+    // Constructors
     public PenaltyAction() {
+        this.issuedAt = LocalDateTime.now();
+    }
+    
+    public PenaltyAction(IntegrityCase integrityCase, String penaltyType, String details, String issuedBy) {
+        this.integrityCase = integrityCase;
+        this.penaltyType = penaltyType;
+        this.details = details;
+        this.issuedBy = issuedBy;
         this.issuedAt = LocalDateTime.now();
     }
     
@@ -36,7 +45,12 @@ public class PenaltyAction {
     public void setId(Long id) { this.id = id; }
     
     public IntegrityCase getIntegrityCase() { return integrityCase; }
-    public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
+    public void setIntegrityCase(IntegrityCase integrityCase) { 
+        if (integrityCase == null) {
+            throw new IllegalArgumentException("Integrity case cannot be null");
+        }
+        this.integrityCase = integrityCase; 
+    }
     
     public String getPenaltyType() { return penaltyType; }
     public void setPenaltyType(String penaltyType) { this.penaltyType = penaltyType; }
@@ -48,5 +62,10 @@ public class PenaltyAction {
     public void setIssuedBy(String issuedBy) { this.issuedBy = issuedBy; }
     
     public LocalDateTime getIssuedAt() { return issuedAt; }
-    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
+    public void setIssuedAt(LocalDateTime issuedAt) { 
+        if (issuedAt == null) {
+            throw new IllegalArgumentException("Issued at timestamp cannot be null");
+        }
+        this.issuedAt = issuedAt; 
+    }
 }
