@@ -21,22 +21,15 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     
     @Override
     public StudentProfile createStudent(StudentProfile studentProfile) {
-        // Data validation
+        // Validation
         if (studentProfile.getYearLevel() == null) {
             throw new IllegalArgumentException("Year level cannot be null");
         }
-        
         if (studentProfile.getName() == null || studentProfile.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Student name cannot be empty");
+            throw new IllegalArgumentException("Name cannot be empty");
         }
-        
         if (studentProfile.getEmail() == null || studentProfile.getEmail().trim().isEmpty()) {
             throw new IllegalArgumentException("Email cannot be empty");
-        }
-        
-        // Set default values
-        if (studentProfile.getRepeatOffender() == null) {
-            studentProfile.setRepeatOffender(false);
         }
         
         return studentProfileRepository.save(studentProfile);
@@ -46,7 +39,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     @Transactional(readOnly = true)
     public StudentProfile getStudentById(Long id) {
         return studentProfileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student profile not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
     }
     
     @Override
@@ -57,18 +50,13 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     
     @Override
     public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-        StudentProfile studentProfile = getStudentById(studentId);
+        StudentProfile student = getStudentById(studentId);
         
-        // Simple logic for demonstration
-        // In real implementation, you'd count integrity cases
-        long caseCount = studentProfile.getIntegrityCases().size();
+        // Count cases to determine if repeat offender
+        int caseCount = student.getIntegrityCases().size();
+        boolean isRepeatOffender = caseCount >= 2;
         
-        if (caseCount >= 2) {
-            studentProfile.setRepeatOffender(true);
-        } else {
-            studentProfile.setRepeatOffender(false);
-        }
-        
-        return studentProfileRepository.save(studentProfile);
+        student.setRepeatOffender(isRepeatOffender);
+        return studentProfileRepository.save(student);
     }
 }

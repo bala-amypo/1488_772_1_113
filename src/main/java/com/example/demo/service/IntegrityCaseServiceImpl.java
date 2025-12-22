@@ -27,39 +27,26 @@ public class IntegrityCaseServiceImpl implements IntegrityCaseService {
     
     @Override
     public IntegrityCase createCase(IntegrityCase integrityCase) {
-        // Data validation
+        // Validation
         if (integrityCase.getStudentProfile() == null || integrityCase.getStudentProfile().getId() == null) {
-            throw new IllegalArgumentException("Student profile is required to create a case");
+            throw new IllegalArgumentException("Student profile is required");
         }
         
-        if (integrityCase.getStatus() == null || integrityCase.getStatus().trim().isEmpty()) {
-            integrityCase.setStatus("OPEN");
-        }
-        
-        // Validate student exists
         Long studentId = integrityCase.getStudentProfile().getId();
-        StudentProfile studentProfile = studentProfileRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student profile not found with id: " + studentId));
+        StudentProfile student = studentProfileRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
         
-        integrityCase.setStudentProfile(studentProfile);
-        
+        integrityCase.setStudentProfile(student);
         return integrityCaseRepository.save(integrityCase);
     }
     
     @Override
     public IntegrityCase updateCaseStatus(Long caseId, String newStatus) {
         IntegrityCase integrityCase = integrityCaseRepository.findById(caseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Integrity case not found with id: " + caseId));
+                .orElseThrow(() -> new ResourceNotFoundException("Case not found with id: " + caseId));
         
-        // Validate status
         if (newStatus == null || newStatus.trim().isEmpty()) {
-            throw new IllegalArgumentException("Status cannot be null or empty");
-        }
-        
-        // Validate status transition
-        String currentStatus = integrityCase.getStatus();
-        if ("CLOSED".equals(currentStatus) && !"CLOSED".equals(newStatus)) {
-            throw new IllegalArgumentException("Cannot change status from CLOSED");
+            throw new IllegalArgumentException("Status cannot be empty");
         }
         
         integrityCase.setStatus(newStatus);

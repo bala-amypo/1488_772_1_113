@@ -24,22 +24,15 @@ public class EvidenceRecordServiceImpl implements EvidenceRecordService {
     
     @Override
     public EvidenceRecord submitEvidence(EvidenceRecord evidenceRecord) {
-        // Data validation
         if (evidenceRecord.getIntegrityCase() == null || evidenceRecord.getIntegrityCase().getId() == null) {
-            throw new IllegalArgumentException("Integrity case is required to submit evidence");
+            throw new IllegalArgumentException("Integrity case is required");
         }
         
-        if (evidenceRecord.getContent() == null || evidenceRecord.getContent().trim().isEmpty()) {
-            throw new IllegalArgumentException("Evidence content cannot be empty");
-        }
-        
-        // Validate integrity case exists
         Long caseId = evidenceRecord.getIntegrityCase().getId();
         IntegrityCase integrityCase = integrityCaseRepository.findById(caseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Integrity case not found with id: " + caseId));
+                .orElseThrow(() -> new ResourceNotFoundException("Case not found with id: " + caseId));
         
         evidenceRecord.setIntegrityCase(integrityCase);
-        
         return evidenceRecordRepository.save(evidenceRecord);
     }
 }

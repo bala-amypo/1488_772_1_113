@@ -24,23 +24,17 @@ public class PenaltyActionServiceImpl implements PenaltyActionService {
     
     @Override
     public PenaltyAction addPenalty(PenaltyAction penaltyAction) {
-        // Data validation
         if (penaltyAction.getIntegrityCase() == null || penaltyAction.getIntegrityCase().getId() == null) {
-            throw new IllegalArgumentException("Integrity case is required to add penalty");
+            throw new IllegalArgumentException("Integrity case is required");
         }
         
-        if (penaltyAction.getPenaltyType() == null || penaltyAction.getPenaltyType().trim().isEmpty()) {
-            throw new IllegalArgumentException("Penalty type cannot be empty");
-        }
-        
-        // Validate integrity case exists
         Long caseId = penaltyAction.getIntegrityCase().getId();
         IntegrityCase integrityCase = integrityCaseRepository.findById(caseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Integrity case not found with id: " + caseId));
+                .orElseThrow(() -> new ResourceNotFoundException("Case not found with id: " + caseId));
         
         penaltyAction.setIntegrityCase(integrityCase);
         
-        // Update case status from "OPEN" to "UNDER_REVIEW" when penalty is added
+        // Update case status when penalty is added
         if ("OPEN".equals(integrityCase.getStatus())) {
             integrityCase.setStatus("UNDER_REVIEW");
             integrityCaseRepository.save(integrityCase);
