@@ -1,8 +1,8 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
 import com.example.demo.entity.StudentProfile;
-import com.example.demo.repository.StudentProfileRepository;
-import com.example.demo.service.StudentProfileService;
+import com.example.demo.repository.*;
+import com.example.demo.util.RepeatOffenderCalculator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,35 +10,21 @@ import java.util.List;
 @Service
 public class StudentProfileServiceImpl implements StudentProfileService {
 
-    private final StudentProfileRepository repository;
+    private final StudentProfileRepository studentRepo;
 
-    public StudentProfileServiceImpl(StudentProfileRepository repository) {
-        this.repository = repository;
+    public StudentProfileServiceImpl(
+            StudentProfileRepository studentRepo,
+            IntegrityCaseRepository c,
+            RepeatOffenderRecordRepository r,
+            RepeatOffenderCalculator calc) {
+        this.studentRepo = studentRepo;
     }
 
-    @Override
-    public StudentProfile save(StudentProfile studentProfile) {
-        return repository.save(studentProfile);
+    public StudentProfile createStudent(StudentProfile student) {
+        return studentRepo.save(student);
     }
 
-    @Override
-    public StudentProfile getById(Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<StudentProfile> getAll() {
-        return repository.findAll();
-    }
-
-    @Override
-    public StudentProfile update(Long id, StudentProfile studentProfile) {
-        studentProfile.setId(id);
-        return repository.save(studentProfile);
-    }
-
-    @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public List<StudentProfile> getAllStudents() {
+        return studentRepo.findAll();
     }
 }
