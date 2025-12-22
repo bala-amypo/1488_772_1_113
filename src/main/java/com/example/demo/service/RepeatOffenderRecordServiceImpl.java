@@ -9,15 +9,14 @@ import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.service.RepeatOffenderRecordService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordService {
-    
     private final StudentProfileRepository studentProfileRepository;
     private final IntegrityCaseRepository integrityCaseRepository;
     private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
@@ -34,37 +33,19 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
     public RepeatOffenderRecord calculateAndSaveRepeatOffenderRecord(Long studentId) {
         StudentProfile student = studentProfileRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
-        
-        // Get all cases for this student
         var cases = integrityCaseRepository.findByStudentProfile_Id(studentId);
         int totalCases = cases.size();
-        
-        // Find earliest incident date
-        Optional<LocalDate> firstIncidentDate = cases.stream()
-                .map(c -> c.getIncidentDate())
-                .filter(date -> date != null)
-                .min(Comparator.naturalOrder());
-        
-        // Calculate severity
+        Optional<LocalDate> firstIncidentDate = cases.stream().map(c -> c.getIncidentDate()).filter(date -> date != null).min(Comparator.naturalOrder());
         String flagSeverity;
-        if (totalCases == 0) {
-            flagSeverity = "LOW";
-        } else if (totalCases == 1) {
-            flagSeverity = "LOW";
-        } else if (totalCases == 2 || totalCases == 3) {
-            flagSeverity = "MEDIUM";
-        } else {
-            flagSeverity = "HIGH";
-        }
+        if (totalCases == 0) flagSeverity = "LOW";
+        else if (totalCases == 1) flagSeverity = "LOW";
+        else if (totalCases == 2 || totalCases == 3) flagSeverity = "MEDIUM";
+        else flagSeverity = "HIGH";
         
-        // Update student's repeat offender status
         student.setRepeatOffender(totalCases >= 2);
         studentProfileRepository.save(student);
         
-        // Find existing record or create new
-        Optional<RepeatOffenderRecord> existingRecord = 
-                repeatOffenderRecordRepository.findByStudentProfile(student);
-        
+        Optional<RepeatOffenderRecord> existingRecord = repeatOffenderRecordRepository.findByStudentProfile(student);
         RepeatOffenderRecord record;
         if (existingRecord.isPresent()) {
             record = existingRecord.get();
@@ -72,14 +53,27 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
             record.setFlagSeverity(flagSeverity);
             firstIncidentDate.ifPresent(record::setFirstIncidentDate);
         } else {
-            record = new RepeatOffenderRecord(
-                student,
-                totalCases,
-                firstIncidentDate.orElse(null),
-                flagSeverity
-            );
+            record = new RepeatOffenderRecord(student, totalCases, firstIncidentDate.orElse(null), flagSeverity);
         }
-        
         return repeatOffenderRecordRepository.save(record);
+    }
+    
+    @Override @Transactional(readOnly = true)
+    public Optional<RepeatOffenderRecord> getRecordByStudentId(Long studentId) {
+        StudentProfile student = studentProfileRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
+        return repeatOffenderRecordRepository.findByStudentProfile(student);
+    }
+    
+    @Override @Transactional(readOnly = true)
+    public List<RepeatOffenderRecord> getAllRecords() {
+        return repeatOffenderRecordRepository.findAll();
+    }
+    
+    @Override
+    public void deleteRecord(Long id) {
+        RepeatOffenderRecord record = repeatOffenderRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Record not found with id: " + id));
+        repeatOffenderRecordRepository.delete(record);
     }
 }
