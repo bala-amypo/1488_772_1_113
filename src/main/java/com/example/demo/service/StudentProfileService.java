@@ -1,18 +1,17 @@
 package com.example.demo.service;
 
-import com.example.demo.model.StudentProfile;
+import com.example.demo.entity.StudentProfile;
 import java.util.List;
-import java.util.Optional;
 
 public interface StudentProfileService {
 
-    StudentProfile saveStudent(StudentProfile student);
+    StudentProfile save(StudentProfile studentProfile);
 
-    List<StudentProfile> getAllStudents();
+    StudentProfile getById(Long id);
 
-    Optional<StudentProfile> getStudentById(Long id);
+    List<StudentProfile> getAll();
 
-    StudentProfile updateStudent(Long id, StudentProfile student);
+    StudentProfile update(Long id, StudentProfile studentProfile);
 
-    void deleteStudent(Long id);
+    void delete(Long id);
 }
