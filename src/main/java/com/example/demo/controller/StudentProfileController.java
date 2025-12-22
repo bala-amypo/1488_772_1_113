@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.service.StudentProfileService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,28 +17,28 @@ public class StudentProfileController {
     }
 
     @PostMapping
-    public StudentProfileController createStudent(@RequestBody StudentProfile s) {
-        return service.saveStudent(s);
-    }
-
-    @GetMapping
-    public List<StudentProfile> getAllStudents() {
-        return service.getAllStudents();
+    public StudentProfile create(@RequestBody StudentProfile studentProfile) {
+        return service.save(studentProfile);
     }
 
     @GetMapping("/{id}")
-    public StudentProfile getStudent(@PathVariable Long id) {
-        return service.getStudentById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+    public StudentProfile get(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+    @GetMapping
+    public List<StudentProfile> getAll() {
+        return service.getAll();
     }
 
     @PutMapping("/{id}")
-    public StudentProfile updateStudent(@PathVariable Long id, @RequestBody StudentProfile s) {
-        return service.updateStudent(id, s);
+    public StudentProfile update(@PathVariable Long id,
+                                 @RequestBody StudentProfile studentProfile) {
+        return service.update(id, studentProfile);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Long id) {
-        service.deleteStudent(id);
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }

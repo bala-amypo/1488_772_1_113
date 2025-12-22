@@ -1,53 +1,44 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.StudentProfile;
+import com.example.demo.entity.StudentProfile;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentProfileServiceImpl implements StudentProfileService {
 
-    @Autowired
-    private StudentProfileRepository studentProfileRepository;
+    private final StudentProfileRepository repository;
 
-    @Override
-    public StudentProfile saveStudent(StudentProfile student) {
-        return studentProfileRepository.save(student);
+    public StudentProfileServiceImpl(StudentProfileRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public List<StudentProfile> getAllStudents() {
-        return studentProfileRepository.findAll();
+    public StudentProfile save(StudentProfile studentProfile) {
+        return repository.save(studentProfile);
     }
 
     @Override
-    public Optional<StudentProfile> getStudentById(Long id) {
-        return studentProfileRepository.findById(id);
+    public StudentProfile getById(Long id) {
+        return repository.findById(id).orElse(null);
     }
 
     @Override
-    public StudentProfile updateStudent(Long id, StudentProfile studentDetails) {
-        StudentProfile existingStudent = studentProfileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-
-        existingStudent.setName(studentDetails.getName());
-        existingStudent.setEmail(studentDetails.getEmail());
-        existingStudent.setAge(studentDetails.getAge());
-        // Add other fields as needed
-
-        return studentProfileRepository.save(existingStudent);
+    public List<StudentProfile> getAll() {
+        return repository.findAll();
     }
 
     @Override
-    public void deleteStudent(Long id) {
-        StudentProfile existingStudent = studentProfileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-        studentProfileRepository.delete(existingStudent);
+    public StudentProfile update(Long id, StudentProfile studentProfile) {
+        studentProfile.setId(id);
+        return repository.save(studentProfile);
+    }
+
+    @Override
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }
