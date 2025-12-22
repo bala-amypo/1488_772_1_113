@@ -38,7 +38,10 @@ public class EvidenceRecordController {
     public ResponseEntity<Map<String, Object>> getEvidenceByCase(@PathVariable Long caseId) {
         try {
             List<EvidenceRecord> evidence = evidenceRecordService.getEvidenceByCaseId(caseId);
-            Map<String, Object> response = createSuccessResponse("Evidence retrieved", evidence, HttpStatus.OK);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Evidence retrieved");
+            response.put("data", evidence);
             response.put("count", evidence.size());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -49,7 +52,10 @@ public class EvidenceRecordController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllEvidence() {
         List<EvidenceRecord> evidence = evidenceRecordService.getAllEvidence();
-        Map<String, Object> response = createSuccessResponse("Evidence retrieved", evidence, HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Evidence retrieved");
+        response.put("data", evidence);
         response.put("count", evidence.size());
         return ResponseEntity.ok(response);
     }

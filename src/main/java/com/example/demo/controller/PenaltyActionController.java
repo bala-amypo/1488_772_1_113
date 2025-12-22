@@ -38,7 +38,10 @@ public class PenaltyActionController {
     public ResponseEntity<Map<String, Object>> getPenaltiesByCase(@PathVariable Long caseId) {
         try {
             List<PenaltyAction> penalties = penaltyActionService.getPenaltiesByCaseId(caseId);
-            Map<String, Object> response = createSuccessResponse("Penalties retrieved", penalties, HttpStatus.OK);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Penalties retrieved");
+            response.put("data", penalties);
             response.put("count", penalties.size());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -49,7 +52,10 @@ public class PenaltyActionController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllPenalties() {
         List<PenaltyAction> penalties = penaltyActionService.getAllPenalties();
-        Map<String, Object> response = createSuccessResponse("Penalties retrieved", penalties, HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Penalties retrieved");
+        response.put("data", penalties);
         response.put("count", penalties.size());
         return ResponseEntity.ok(response);
     }

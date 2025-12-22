@@ -40,7 +40,10 @@ public class StudentProfileController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllStudents() {
         List<StudentProfile> students = studentProfileService.getAllStudents();
-        Map<String, Object> response = createSuccessResponse("Students retrieved", students, HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Students retrieved");
+        response.put("data", students);
         response.put("count", students.size());
         return ResponseEntity.ok(response);
     }

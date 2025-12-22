@@ -37,7 +37,10 @@ public class IntegrityCaseController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCases() {
         List<IntegrityCase> cases = integrityCaseService.getAllCases();
-        Map<String, Object> response = createSuccessResponse("Cases retrieved", cases, HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Cases retrieved");
+        response.put("data", cases);
         response.put("count", cases.size());
         return ResponseEntity.ok(response);
     }
@@ -46,7 +49,10 @@ public class IntegrityCaseController {
     public ResponseEntity<Map<String, Object>> getCasesByStudent(@PathVariable Long studentId) {
         try {
             List<IntegrityCase> cases = integrityCaseService.getCasesByStudent(studentId);
-            Map<String, Object> response = createSuccessResponse("Cases retrieved", cases, HttpStatus.OK);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Cases retrieved");
+            response.put("data", cases);
             response.put("count", cases.size());
             return ResponseEntity.ok(response);
         } catch (Exception e) {

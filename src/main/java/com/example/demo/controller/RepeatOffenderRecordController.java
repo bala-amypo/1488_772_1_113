@@ -37,7 +37,10 @@ public class RepeatOffenderRecordController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllRecords() {
         List<RepeatOffenderRecord> records = repeatOffenderRecordService.getAllRecords();
-        Map<String, Object> response = createSuccessResponse("Repeat offender records retrieved", records, HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Repeat offender records retrieved");
+        response.put("data", records);
         response.put("count", records.size());
         return ResponseEntity.ok(response);
     }
