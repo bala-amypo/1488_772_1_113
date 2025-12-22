@@ -4,19 +4,29 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "evidence_records")
 public class EvidenceRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private IntegrityCase integrityCase;
 
     private String evidenceType;
     private String content;
     private String submittedBy;
+    private LocalDateTime submittedAt;
 
-    private LocalDateTime submittedAt = LocalDateTime.now();
+    @PrePersist
+    public void onCreate() {
+        submittedAt = LocalDateTime.now();
+    }
+
+    public EvidenceRecord() {}
+
+    // getters & setters
+    public Long getId() { return id; }
+    public IntegrityCase getIntegrityCase() { return integrityCase; }
+    public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
 }

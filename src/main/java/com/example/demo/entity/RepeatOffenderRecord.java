@@ -1,9 +1,9 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "repeat_offender_records")
 public class RepeatOffenderRecord {
 
     @Id
@@ -11,21 +11,14 @@ public class RepeatOffenderRecord {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_profile_id")
     private StudentProfile studentProfile;
 
-    private int totalCases;
+    private Integer totalCases;
+    private LocalDate lastIncidentDate;
     private String flagSeverity;
 
-    public void setStudentProfile(StudentProfile studentProfile) {
-        this.studentProfile = studentProfile;
-    }
+    public RepeatOffenderRecord() {}
 
-    public void setTotalCases(int totalCases) {
-        this.totalCases = totalCases;
-    }
-
-    public void setFlagSeverity(String flagSeverity) {
-        this.flagSeverity = flagSeverity;
-    }
+    public Long getId() { return id; }
+    public void setFlagSeverity(String flagSeverity) { this.flagSeverity = flagSeverity; }
 }

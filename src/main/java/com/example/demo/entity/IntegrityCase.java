@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "integrity_cases")
 public class IntegrityCase {
 
     @Id
@@ -13,40 +12,26 @@ public class IntegrityCase {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_profile_id", nullable = false)
     private StudentProfile studentProfile;
 
     private String courseCode;
     private String instructorName;
     private String description;
     private String status = "OPEN";
-
     private LocalDate incidentDate;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-    // ✅ getters & setters INSIDE class
-
-    public Long getId() {
-        return id;
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 
-    public StudentProfile getStudentProfile() {
-        return studentProfile;
-    }
+    public IntegrityCase() {}
 
-    public void setStudentProfile(StudentProfile studentProfile) {
-        this.studentProfile = studentProfile;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDate getIncidentDate() {
-        return incidentDate;
-    }
+    // getters & setters
+    public Long getId() { return id; }
+    public StudentProfile getStudentProfile() { return studentProfile; }
+    public void setStudentProfile(StudentProfile studentProfile) { this.studentProfile = studentProfile; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
