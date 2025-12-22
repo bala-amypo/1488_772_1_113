@@ -1,42 +1,52 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "evidence_records")
 public class EvidenceRecord {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "integrity_case_id", nullable = false)
     private IntegrityCase integrityCase;
-
-    @NotBlank
+    
+    @Column(name = "evidence_type")
     private String evidenceType;
-
-    @NotBlank
+    
+    @Column(columnDefinition = "TEXT")
     private String content;
-
+    
+    @Column(name = "submitted_by")
     private String submittedBy;
+    
+    @Column(name = "submitted_at", nullable = false)
     private LocalDateTime submittedAt;
-
-    @PrePersist
-    public void prePersist() {
-        submittedAt = LocalDateTime.now();
+    
+    public EvidenceRecord() {
+        this.submittedAt = LocalDateTime.now();
     }
-
-    // Getters & Setters
+    
+    // Getters and Setters
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
     public IntegrityCase getIntegrityCase() { return integrityCase; }
     public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
+    
     public String getEvidenceType() { return evidenceType; }
     public void setEvidenceType(String evidenceType) { this.evidenceType = evidenceType; }
+    
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+    
     public String getSubmittedBy() { return submittedBy; }
     public void setSubmittedBy(String submittedBy) { this.submittedBy = submittedBy; }
+    
     public LocalDateTime getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
 }
