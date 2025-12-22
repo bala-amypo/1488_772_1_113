@@ -1,7 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.PenaltyAction;
+import com.example.demo.repository.PenaltyActionRepository;
+import com.example.demo.service.PenaltyActionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,27 +11,17 @@ import java.util.List;
 public class PenaltyActionServiceImpl implements PenaltyActionService {
 
     private final PenaltyActionRepository penaltyRepo;
-    private final IntegrityCaseRepository caseRepo;
 
-    public PenaltyActionServiceImpl(
-            PenaltyActionRepository penaltyRepo,
-            IntegrityCaseRepository caseRepo) {
+    public PenaltyActionServiceImpl(PenaltyActionRepository penaltyRepo) {
         this.penaltyRepo = penaltyRepo;
-        this.caseRepo = caseRepo;
     }
 
+    @Override
     public PenaltyAction addPenalty(PenaltyAction penalty) {
         return penaltyRepo.save(penalty);
     }
 
-    public List<PenaltyAction> getPenaltiesByCase(Long caseId) {
-        return penaltyRepo.findAll();
-    }
-
-    public PenaltyAction getPenaltyById(Long id) {
-        return penaltyRepo.findById(id).orElse(null);
-    }
-
+    @Override
     public List<PenaltyAction> getAllPenalties() {
         return penaltyRepo.findAll();
     }

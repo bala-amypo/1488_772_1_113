@@ -7,37 +7,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/students")
+@RequestMapping("/students")
 public class StudentProfileController {
 
-    private final StudentProfileService service;
+    private final StudentProfileService studentService;
 
-    public StudentProfileController(StudentProfileService service) {
-        this.service = service;
+    public StudentProfileController(StudentProfileService studentService) {
+        this.studentService = studentService;
     }
 
     @PostMapping
-    public StudentProfile create(@RequestBody StudentProfile student) {
-        return service.createStudent(student);
-    }
-
-    @GetMapping("/{id}")
-    public StudentProfile getById(@PathVariable Long id) {
-        return service.getStudentById(id);
+    public StudentProfile createStudent(@RequestBody StudentProfile student) {
+        return studentService.createStudent(student);
     }
 
     @GetMapping
-    public List<StudentProfile> getAll() {
-        return service.getAllStudents();
+    public List<StudentProfile> getAllStudents() {
+        return studentService.getAllStudents();
     }
 
-    @PutMapping("/{id}/repeat-status")
-    public StudentProfile updateRepeat(@PathVariable Long id) {
-        return service.updateRepeatOffenderStatus(id);
-    }
-
-    @GetMapping("/lookup/{studentId}")
-    public StudentProfile findByStudentId(@PathVariable String studentId) {
-        return service.findByStudentIdentifier(studentId);
+    @GetMapping("/{id}")
+    public StudentProfile getStudentById(@PathVariable Long id) {
+        return studentService.getStudentById(id);
     }
 }

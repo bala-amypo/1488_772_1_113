@@ -7,27 +7,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/penalties")
+@RequestMapping("/penalties")
 public class PenaltyActionController {
 
-    private final PenaltyActionService service;
+    private final PenaltyActionService penaltyService;
 
-    public PenaltyActionController(PenaltyActionService service) {
-        this.service = service;
+    public PenaltyActionController(PenaltyActionService penaltyService) {
+        this.penaltyService = penaltyService;
     }
 
     @PostMapping
-    public PenaltyAction add(@RequestBody PenaltyAction penalty) {
-        return service.addPenalty(penalty);
-    }
-
-    @GetMapping("/{id}")
-    public PenaltyAction getById(@PathVariable Long id) {
-        return service.getPenaltyById(id);
+    public PenaltyAction addPenalty(@RequestBody PenaltyAction penalty) {
+        return penaltyService.addPenalty(penalty);
     }
 
     @GetMapping
-    public List<PenaltyAction> getAll() {
-        return service.getAllPenalties();
+    public List<PenaltyAction> getAllPenalties() {
+        return penaltyService.getAllPenalties();
     }
 }

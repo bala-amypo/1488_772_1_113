@@ -7,37 +7,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cases")
+@RequestMapping("/cases")
 public class IntegrityCaseController {
 
-    private final IntegrityCaseService service;
+    private final IntegrityCaseService caseService;
 
-    public IntegrityCaseController(IntegrityCaseService service) {
-        this.service = service;
+    public IntegrityCaseController(IntegrityCaseService caseService) {
+        this.caseService = caseService;
     }
 
     @PostMapping
-    public IntegrityCase create(@RequestBody IntegrityCase ic) {
-        return service.createCase(ic);
-    }
-
-    @PutMapping("/{id}/status")
-    public IntegrityCase updateStatus(@PathVariable Long id, @RequestParam String status) {
-        return service.updateCaseStatus(id, status);
-    }
-
-    @GetMapping("/student/{studentId}")
-    public List<IntegrityCase> getByStudent(@PathVariable Long studentId) {
-        return service.getCasesByStudent(studentId);
-    }
-
-    @GetMapping("/{id}")
-    public IntegrityCase getById(@PathVariable Long id) {
-        return service.getCaseById(id);
+    public IntegrityCase createCase(@RequestBody IntegrityCase integrityCase) {
+        return caseService.createCase(integrityCase);
     }
 
     @GetMapping
-    public List<IntegrityCase> getAll() {
-        return service.getAllCases();
+    public List<IntegrityCase> getAllCases() {
+        return caseService.getAllCases();
+    }
+
+    @GetMapping("/{id}")
+    public IntegrityCase getCaseById(@PathVariable Long id) {
+        return caseService.getCaseById(id);
     }
 }
