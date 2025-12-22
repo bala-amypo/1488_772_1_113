@@ -1,11 +1,10 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
-import com.example.demo.entity.PenaltyAction;
-import com.example.demo.entity.IntegrityCase;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.entity.*;
 import com.example.demo.repository.*;
-import com.example.demo.service.PenaltyActionService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PenaltyActionServiceImpl implements PenaltyActionService {
@@ -20,16 +19,19 @@ public class PenaltyActionServiceImpl implements PenaltyActionService {
         this.caseRepo = caseRepo;
     }
 
-    @Override
     public PenaltyAction addPenalty(PenaltyAction penalty) {
-        Long caseId = penalty.getIntegrityCase().getId();
-
-        IntegrityCase c = caseRepo.findById(caseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Case not found"));
-
-        c.setStatus("UNDER_REVIEW");
-        caseRepo.save(c);
-
         return penaltyRepo.save(penalty);
+    }
+
+    public List<PenaltyAction> getPenaltiesByCase(Long caseId) {
+        return penaltyRepo.findAll();
+    }
+
+    public PenaltyAction getPenaltyById(Long id) {
+        return penaltyRepo.findById(id).orElse(null);
+    }
+
+    public List<PenaltyAction> getAllPenalties() {
+        return penaltyRepo.findAll();
     }
 }
