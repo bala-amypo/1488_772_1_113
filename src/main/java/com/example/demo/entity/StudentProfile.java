@@ -1,34 +1,40 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 @Entity
-@Table(name = "student_profiles")
 public class StudentProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String name;
-
-    @Email
-    @NotBlank
-    private String email;
-
-    @NotNull
-    private Integer age;
+    private String registerNumber;
 
     public StudentProfile() {}
 
-    public StudentProfile(String name, String email, Integer age) {
-        this.name = name;
-        this.email = email;
-        this.age = age;
-        this.age = age;
+    public Long getId() {
+        return id;
     }
 
-    // getters & setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRegisterNumber() {
+        return registerNumber;
+    }
+
+    public void setRegisterNumber(String registerNumber) {
+        this.registerNumber = registerNumber;
+    }
 }
