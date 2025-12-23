@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "evidence_records")
-public class EvidenceRecord {
+public class Evi
+denceRecord {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
     @ManyToOne @JoinColumn(name = "integrity_case_id", nullable = false) private IntegrityCase integrityCase;
     @Column(name = "evidence_type") private String evidenceType;
