@@ -8,7 +8,7 @@ import java.util.Optional;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     
-    // Add this line to fix the compilation error
+    // Add this line - it is required by the Security logic
     Optional<AppUser> findByUsername(String username);
 
     Optional<AppUser> findByEmail(String email);
