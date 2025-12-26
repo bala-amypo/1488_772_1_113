@@ -13,43 +13,43 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final String SECRET =
-            "MyJwtSecretKeyMyJwtSecretKeyMyJwtSecretKey"; // ≥ 32 chars
+            "MyJwtSecretKeyMyJwtSecretKeyMyJwtSecretKey"; // >= 32 chars
 
     private static final long EXPIRATION = 86400000; // 1 day
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    // ✅ TOKEN GENERATION (FIXED)
+    // ✅ GENERATE TOKEN (0.11.5 COMPATIBLE)
     public String generateToken(Authentication authentication) {
 
         UserDetails userPrincipal =
                 (UserDetails) authentication.getPrincipal();
 
         return Jwts.builder()
-                .subject(userPrincipal.getUsername())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .setSubject(userPrincipal.getUsername())   // ✅ setSubject
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(key, SignatureAlgorithm.HS256)   // ✅ correct
                 .compact();
     }
 
     // ✅ EXTRACT USERNAME
     public String getUsernameFromJwt(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
+        return Jwts.parserBuilder()                         // ✅ parserBuilder
+                .setSigningKey(key)
                 .build()
-                .parseSignedClaims(token)
-                .getPayload()
+                .parseClaimsJws(token)
+                .getBody()
                 .getSubject();
     }
 
     // ✅ VALIDATE TOKEN
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .verifyWith(key)
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
                     .build()
-                    .parse(token);
+                    .parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
