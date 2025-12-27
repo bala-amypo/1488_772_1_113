@@ -1,18 +1,10 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
 @Entity
-@Data
-@Table(name = "users")
-public class AppUser implements UserDetails {
+public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,29 +16,24 @@ public class AppUser implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private String email;
-    
-    // This field stores the role (e.g., ROLE_FACULTY, ROLE_ADMIN)
-    private String role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
-    /**
-     * Required by Spring Security to handle roles/permissions
-     */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role != null ? role : "ROLE_FACULTY"));
-    }
+    // getters & setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    // Required UserDetails methods - returning true to keep account active
-    @Override
-    public boolean isAccountNonExpired() { return true; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    @Override
-    public boolean isAccountNonLocked() { return true; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
-
-    @Override
-    public boolean isEnabled() { return true; }
+    public Set<Role> getRoles() { return roles; }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 }
