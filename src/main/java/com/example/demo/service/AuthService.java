@@ -1,77 +1,74 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.JwtResponse;
+import com.example.demo.entity.AppUser;
+import com.example.demo.entity.Role;
+import com.example.demo.repository.AppUserRepository;
+import com.example.demo.repository.RoleRepository;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
-import com.example.demo.entity.AppUser;
-import com.example.demo.repository.AppUserRepository;
-import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.dto.AuthResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class AuthService {
 
-    private final AppUserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider tokenProvider;
+    @Autowired
+    private AppUserRepository appUserRepository;
 
-    /**
-     * Requirement Rule 2: Exact constructor order required for automated tests.
-     */
-    public AuthService(AppUserRepository userRepository, 
-                       PasswordEncoder passwordEncoder, 
-                       AuthenticationManager authenticationManager, 
-                       JwtTokenProvider tokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    // ================= REGISTER =================
+    public AppUser register(RegisterRequest request) {
+
+        if (appUserRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        AppUser user = new AppUser();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(request.getEmail());
+
+        Role role = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        user.setRoles(Set.of(role));
+
+        return appUserRepository.save(user);
     }
 
-    public JwtResponse login(LoginRequest loginRequest) {
-        // Authenticate the user
-        Authentication authentication = authenticationManager.authenticate(
+    // ================= LOGIN =================
+    public AuthResponse login(LoginRequest request) {
+
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    loginRequest.getUsername(), 
-                    loginRequest.getPassword()
+                        request.getUsername(),
+                        request.getPassword()
                 )
         );
 
-        // Set authentication in context
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        
-        // Generate Token
-        String jwt = tokenProvider.generateToken(authentication);
-        
-        // Return structured response
-        return new JwtResponse(jwt, loginRequest.getUsername());
-    }
+        AppUser user = appUserRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    public String register(RegisterRequest reg) {
-        // Validation for both Username and Email is usually required for full marks
-        if (userRepository.existsByUsername(reg.getUsername())) {
-            return "Error: Username is already taken!";
-        }
+        String token = jwtUtil.generateToken(user.getUsername());
 
-        if (userRepository.existsByEmail(reg.getEmail())) {
-            return "Error: Email is already in use!";
-        }
-        
-        AppUser user = new AppUser();
-        user.setUsername(reg.getUsername());
-        user.setEmail(reg.getEmail());
-        user.setPassword(passwordEncoder.encode(reg.getPassword()));
-        
-        // Ensure the role is set correctly for SecurityConfig access
-        user.setRole("ROLE_FACULTY"); 
-        
-        userRepository.save(user);
-        return "User registered successfully!";
+        return new AuthResponse(token);
     }
 }
