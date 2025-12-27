@@ -1,34 +1,39 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.JwtResponse;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.AppUser;
 import com.example.demo.service.AuthService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    @Autowired
+    private AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    // ✅ REGISTER
+    @PostMapping("/register")
+    public ResponseEntity<AppUser> register(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        JwtResponse response = authService.login(loginRequest);
+    // ✅ LOGIN (NO AuthResponse)
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
+
+        String token = authService.login(request);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+
         return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest signUpRequest) {
-        String result = authService.register(signUpRequest);
-        if (result.contains("Error")) {
-            return ResponseEntity.badRequest().body(result);
-        }
-        return ResponseEntity.ok(result);
     }
 }

@@ -1,13 +1,13 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtUtil;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.AuthResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +34,7 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // ================= REGISTER =================
+    // ✅ REGISTER USER (NO AuthResponse)
     public AppUser register(RegisterRequest request) {
 
         if (appUserRepository.existsByUsername(request.getUsername())) {
@@ -54,8 +54,8 @@ public class AuthService {
         return appUserRepository.save(user);
     }
 
-    // ================= LOGIN =================
-    public AuthResponse login(LoginRequest request) {
+    // ✅ LOGIN USER → RETURNS JWT STRING
+    public String login(LoginRequest request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -64,11 +64,6 @@ public class AuthService {
                 )
         );
 
-        AppUser user = appUserRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        String token = jwtUtil.generateToken(user.getUsername());
-
-        return new AuthResponse(token);
+        return jwtUtil.generateToken(request.getUsername());
     }
 }
