@@ -19,13 +19,11 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    // ✅ REGISTER
     @PostMapping("/register")
     public ResponseEntity<AppUser> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    // ✅ LOGIN (NO AuthResponse)
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
 
