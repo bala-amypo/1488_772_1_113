@@ -1,57 +1,76 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {
 
-    private static final String SECRET =
-            "MyJwtSecretKeyMyJwtSecretKeyMyJwtSecretKey"; // >= 32 chars
+    private Key signingKey;
+    private long expirationMs;
 
-    private static final long EXPIRATION = 86400000; // 1 day
+    /**
+     * Default constructor for Spring Boot
+     */
+    public JwtTokenProvider() {
+        this.signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        this.expirationMs = 60000;
+    }
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    /**
+     * Constructor REQUIRED by TestNG tests
+     */
+    public JwtTokenProvider(String secret, long expirationMs) {
+        this.signingKey = Keys.hmacShaKeyFor(
+                secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
 
-    // ✅ GENERATE TOKEN (0.11.5 COMPATIBLE)
-    public String generateToken(Authentication authentication) {
+    public String generateToken(
+            Authentication authentication,
+            Long userId,
+            String email,
+            String role) {
 
-        UserDetails userPrincipal =
-                (UserDetails) authentication.getPrincipal();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())   // ✅ setSubject
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(key, SignatureAlgorithm.HS256)   // ✅ correct
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ EXTRACT USERNAME
-    public String getUsernameFromJwt(String token) {
-        return Jwts.parserBuilder()                         // ✅ parserBuilder
-                .setSigningKey(key)
+    public String getUsernameFromToken(String token) {
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(signingKey)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+
+        return claims.getSubject();
     }
 
-    // ✅ VALIDATE TOKEN
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(signingKey)
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (Exception ex) {
             return false;
         }
     }
