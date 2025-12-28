@@ -8,6 +8,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/basic")
 public class BasicServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.getWriter().write("Servlet is running");
