@@ -45,9 +45,11 @@ public class AuthServiceImpl implements AuthService {
         if (appUserRepository.existsByEmail(registerRequest.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
+        Role role = roleRepository.findByName(request.getRole())
+                .orElseGet(() -> roleRepository.save(
+                        new Role(request.getRole())
+                ));
 
-        Role role = roleRepository.findByName(registerRequest.getRole())
-                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
         AppUser user = new AppUser(
                 registerRequest.getFullName(),
