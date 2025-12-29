@@ -1,3 +1,4 @@
+
 package com.example.demo.dto;
 
 public class JwtResponse {
@@ -49,3 +50,4 @@ public class JwtResponse {
         this.role = role;
     }
 }
+
