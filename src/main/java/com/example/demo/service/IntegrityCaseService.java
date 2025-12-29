@@ -14,3 +14,4 @@ public interface IntegrityCaseService {
 
     Optional<IntegrityCase> getCaseById(Long caseId);
 }
+

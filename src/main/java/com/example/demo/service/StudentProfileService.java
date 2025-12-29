@@ -13,3 +13,5 @@ public interface StudentProfileService {
 
     StudentProfile updateRepeatOffenderStatus(Long studentId);
 }
+
+
