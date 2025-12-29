@@ -26,7 +26,6 @@ public class SecurityConfig {
             JwtTokenProvider jwtTokenProvider,
             JwtAuthenticationEntryPoint authenticationEntryPoint,
             CustomUserDetailsService userDetailsService) {
-
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.userDetailsService = userDetailsService;
@@ -55,13 +54,14 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                         "/auth/**",
-                        "/student/**",
-                        "/case/**,
-                        
+                        "/auth/**",
+                        "/api/students/**",
+                        "/api/integrity-cases/**",
+                        "/api/evidence/**",
+                        "/api/penalties/**",
                         "/swagger-ui/**",
-                        "/v3/api-docs/**")
-                .permitAll()
+                        "/v3/api-docs/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             );
 
