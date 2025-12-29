@@ -38,3 +38,4 @@ public interface IntegrityCaseRepository extends JpaRepository<IntegrityCase, Lo
 
     List<IntegrityCase> findByStatus(String status);
 }
+
