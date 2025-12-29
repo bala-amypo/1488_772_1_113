@@ -76,3 +76,4 @@ public class PenaltyAction {
         this.issuedAt = issuedAt;
     }
 }
+
