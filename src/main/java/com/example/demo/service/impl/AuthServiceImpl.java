@@ -1,3 +1,4 @@
+
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.JwtResponse;
@@ -9,6 +10,7 @@ import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
+import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
             JwtTokenProvider jwtTokenProvider) {
+
         this.appUserRepository = appUserRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -40,25 +43,19 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterRequest registerRequest) {
 
-        // Check if email already exists
         if (appUserRepository.existsByEmail(registerRequest.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
 
-        // Get role or create new
         Role role = roleRepository.findByName(registerRequest.getRole())
-                .orElseGet(() -> roleRepository.save(
-                        new Role(registerRequest.getRole())
-                ));
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
-        // Create user
         AppUser user = new AppUser(
                 registerRequest.getFullName(),
                 registerRequest.getEmail(),
                 passwordEncoder.encode(registerRequest.getPassword())
         );
 
-        // Assign role and save
         user.getRoles().add(role);
         appUserRepository.save(user);
     }
@@ -66,12 +63,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse login(LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                loginRequest.getEmail(),
+                                loginRequest.getPassword()
+                        )
+                );
 
         AppUser user = appUserRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

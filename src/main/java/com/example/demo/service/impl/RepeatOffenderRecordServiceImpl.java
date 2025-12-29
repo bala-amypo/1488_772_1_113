@@ -48,3 +48,4 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
         return record;
     }
 }
+
