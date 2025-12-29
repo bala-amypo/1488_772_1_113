@@ -5,8 +5,6 @@ import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 
 public interface AuthService {
-
-    JwtResponse login(LoginRequest loginRequest);
-
-    void register(RegisterRequest registerRequest);
+    void register(RegisterRequest request);
+    JwtResponse login(LoginRequest request);
 }
