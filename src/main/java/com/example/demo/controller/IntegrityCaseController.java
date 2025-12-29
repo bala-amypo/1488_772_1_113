@@ -62,3 +62,4 @@ public class IntegrityCaseController {
                 .orElse(ResponseEntity.notFound().build());
     }
 }
+
