@@ -1,3 +1,4 @@
+
 package com.example.demo.security;
 
 import com.example.demo.entity.AppUser;
@@ -44,3 +45,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 }
+
